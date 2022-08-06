@@ -1,37 +1,78 @@
 package com.sportsradar.scoreboard;
 
+import com.sportsradar.exception.GameAlreadyStartedException;
+import com.sportsradar.exception.GameSameTeamsException;
+import com.sportsradar.game.FootballGame;
+import com.sportsradar.game.Game;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UnknownFormatConversionException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FootballScoreboardTest {
 
+    static final String TEAM_A = "TEAM_A";
+    static final String TEAM_B = "TEAM_B";
+    static final String TEAM_C = "TEAM_C";
+    static final String TEAM_D = "TEAM_D";
+
     @Test
-    void shouldStartGame_success(){
-        assertEquals(true,false);
+    void shouldStartGame_success() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        String teamATeamBGameId = FootballGame.generateUniqueId(TEAM_A, TEAM_B);
+        Map<String, Game> result = new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_B), scoreboard);
+
+        assertEquals(1, result.size());
+        assertEquals(result.get(teamATeamBGameId).getHomeTeamScore(), 0);
+        assertEquals(result.get(teamATeamBGameId).getAwayTeamScore(), 0);
     }
+
     @Test
-    void shouldFinishGame_success(){
-        assertEquals(true,false);
+    void shouldStartGame_addMultipleGames_success() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        String teamATeamBGameId = FootballGame.generateUniqueId(TEAM_A, TEAM_B);
+        String teamCTeamDGameId = FootballGame.generateUniqueId(TEAM_C, TEAM_D);
+        Map<String, Game> updatedScoreboard = new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_B), scoreboard);
+        Map<String, Game> result = new FootballScoreboard().startGame(Optional.of(TEAM_C), Optional.of(TEAM_D), updatedScoreboard);
+
+        assertEquals(2, result.size());
+        assertEquals(result.get(teamATeamBGameId).getHomeTeamScore(), 0);
+        assertEquals(result.get(teamATeamBGameId).getHomeTeamScore(), 0);
+        assertEquals(result.get(teamCTeamDGameId).getHomeTeamScore(), 0);
+        assertEquals(result.get(teamCTeamDGameId).getHomeTeamScore(), 0);
+
     }
+
     @Test
-    void shouldUpdateScore_success(){
-        assertEquals(true,false);
+    void shouldStartGame_emptyTeamName_failure() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        assertThrows(UnknownFormatConversionException.class, () ->
+                new FootballScoreboard().startGame(Optional.of(""), Optional.of(TEAM_A), scoreboard));
     }
+
     @Test
-    void shouldProduceSummary_success(){
-        assertEquals(true,false);
+    void shouldStartGame_startingRunningGame_failure() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_B), scoreboard);
+
+        assertThrows(GameAlreadyStartedException.class, () ->
+                new FootballScoreboard().startGame(Optional.of(TEAM_B), Optional.of(TEAM_A), updatedScoreBoard));
     }
+
     @Test
-    void shouldFinishGame_gameDoesNotExist_throws(){
-        assertEquals(true,false);
-    }
-    @Test
-    void shouldUpdateScore_gameDoesNotExist_throws(){
-        assertEquals(true,false);
-    }
-    @Test
-    void shouldUpdateScore_negativeScoreInput_failure(){
-        assertEquals(true,false);
+    void shouldStartGame_sameHomeGameAndAwayGame_failure() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        assertThrows(GameSameTeamsException.class, () ->
+                new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_A), scoreboard));
     }
 }
