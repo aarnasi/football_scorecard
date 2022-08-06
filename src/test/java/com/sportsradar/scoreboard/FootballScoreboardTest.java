@@ -1,5 +1,6 @@
 package com.sportsradar.scoreboard;
 
+import com.sportsradar.exception.FinishGameException;
 import com.sportsradar.exception.GameAlreadyStartedException;
 import com.sportsradar.exception.GameSameTeamsException;
 import com.sportsradar.game.FootballGame;
@@ -74,5 +75,25 @@ public class FootballScoreboardTest {
 
         assertThrows(GameSameTeamsException.class, () ->
                 new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_A), scoreboard));
+    }
+
+    @Test
+    void shouldFinishGame_success() throws Exception{
+        Map<String, Game> scoreboard = new HashMap();
+        Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(Optional.of(TEAM_A), Optional.of(TEAM_B), scoreboard);
+        updatedScoreBoard = new FootballScoreboard().startGame(Optional.of(TEAM_C), Optional.of(TEAM_D), updatedScoreBoard);
+
+        updatedScoreBoard = new FootballScoreboard().finishGame(Optional.of(TEAM_B), Optional.of(TEAM_A), updatedScoreBoard);
+
+        assertEquals(1,updatedScoreBoard.size());
+        assertEquals(false,Utlity.isGameRunning(TEAM_A,TEAM_B,updatedScoreBoard));
+    }
+
+    @Test
+    void shouldFinishGame_noGamesToFinish_throws() throws Exception{
+        Map<String, Game> scoreboard = new HashMap();
+
+        assertThrows(FinishGameException.class, () -> new FootballScoreboard().finishGame(Optional.of(TEAM_A), Optional.of(TEAM_B), scoreboard));
+
     }
 }

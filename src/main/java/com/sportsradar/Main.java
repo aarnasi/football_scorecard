@@ -1,5 +1,6 @@
 package com.sportsradar;
 
+import com.sportsradar.exception.FinishGameException;
 import com.sportsradar.exception.GameAlreadyStartedException;
 import com.sportsradar.exception.GameSameTeamsException;
 import com.sportsradar.exception.InvalidInputException;
@@ -52,7 +53,36 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                     break;
-                case "2": //TODO
+                case "2":
+                    System.out.println("Enter home team name");
+                    homeTeamName = scanner.nextLine();
+                    while (homeTeamName.isEmpty()) {
+                        System.out.println("Empty input. Please enter home team name");
+                        homeTeamName = scanner.nextLine();
+                    }
+                    System.out.println("Enter away team name");
+                    awayTeamName = scanner.nextLine();
+                    while (awayTeamName.isEmpty()) {
+                        System.out.println("Empty input. Please enter home team name");
+                        awayTeamName = scanner.nextLine();
+                    }
+                    if(homeTeamName.equalsIgnoreCase(awayTeamName)){
+                        System.out.println("Home team and away team cannot be same");
+                        option = "2";
+                        break;
+                    }
+                    try {
+                        new FootballScoreboard().finishGame(Optional.of(homeTeamName),Optional.of(awayTeamName),scoreboard);
+                        System.out.println(String.format("Game between %s and %s marked finished successfully",homeTeamName,awayTeamName));
+                    } catch (InvalidInputException e) {
+                        System.out.println(e.getMessage());
+                    } catch (GameAlreadyStartedException e) {
+                        System.out.println(e.getMessage());
+                    } catch (GameSameTeamsException e) {
+                        System.out.println(e.getMessage());
+                    } catch (FinishGameException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "3": //TODO
                     break;

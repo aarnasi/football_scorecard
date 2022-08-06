@@ -1,5 +1,6 @@
 package com.sportsradar.scoreboard;
 
+import com.sportsradar.exception.FinishGameException;
 import com.sportsradar.exception.GameAlreadyStartedException;
 import com.sportsradar.exception.GameSameTeamsException;
 import com.sportsradar.exception.InvalidInputException;
@@ -11,4 +12,5 @@ import java.util.Optional;
 public interface Scoreboard {
     Map<String, Game> startGame(Optional<String> homeTeamName, Optional<String> awayTeamName, Map<String, Game> games)
             throws GameAlreadyStartedException, GameSameTeamsException, InvalidInputException;
+    Map<String, Game> finishGame(Optional<String> homeTeamName, Optional<String> awayTeamName, Map<String, Game> games) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException;
 }
