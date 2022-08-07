@@ -1,16 +1,12 @@
 package com.sportsradar.game;
 
-import java.util.Optional;
-
 /**
  * Represents a football game.
  */
 public final class FootballGame extends Game {
 
-    public FootballGame(Optional<String> homeTeamName, Optional<String> awayTeamName) {
-        super();
-        super.setHomeTeamName(homeTeamName);
-        super.setAwayTeamName(awayTeamName);
+    public FootballGame(String homeTeamName, String awayTeamName) {
+        super(homeTeamName, awayTeamName);
     }
 
     /**

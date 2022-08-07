@@ -3,11 +3,10 @@ package com.sportsradar;
 import com.sportsradar.exception.*;
 import com.sportsradar.game.Game;
 import com.sportsradar.scoreboard.FootballScoreboard;
-import com.sportsradar.scoreboard.Scoreboard;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -15,7 +14,8 @@ public class Main {
         String option = "";
         String homeTeamName = "";
         String awayTeamName = "";
-        Map<String, Game> scoreboard = new HashMap();
+        Map<String, Game> scoreboard = new LinkedHashMap();
+        int gameCounter = 1;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Worldcup Scoreboard");
         do {
@@ -41,7 +41,9 @@ public class Main {
                         awayTeamName = scanner.nextLine();
                     }
                     try {
-                        scoreboard = new FootballScoreboard().startGame(Optional.of(homeTeamName), Optional.of(awayTeamName), scoreboard);
+                        Game footballGame = new Game(homeTeamName, awayTeamName);
+                        footballGame.setGameNumber(++gameCounter);
+                        scoreboard = new FootballScoreboard().startGame(footballGame, scoreboard);
                         System.out.println("Game started with score 0:0");
                     } catch (GameAlreadyStartedException e) {
                         System.out.println(e.getMessage());
@@ -70,7 +72,7 @@ public class Main {
                         break;
                     }
                     try {
-                        new FootballScoreboard().finishGame(Optional.of(homeTeamName), Optional.of(awayTeamName), scoreboard);
+                        scoreboard = new FootballScoreboard().finishGame(new Game(homeTeamName, awayTeamName), scoreboard);
                         System.out.println(String.format("Game between %s and %s marked finished successfully", homeTeamName, awayTeamName));
                     } catch (InvalidInputException e) {
                         System.out.println(e.getMessage());
@@ -90,8 +92,8 @@ public class Main {
                     int chosenGameOption = 0;
                     int index = 1;
                     for (Map.Entry<String, Game> entry : scoreboard.entrySet()) {
-                        System.out.println(String.format("(%d) %s vs %s", index, entry.getValue().getHomeTeamName().get().toUpperCase(),
-                                entry.getValue().getAwayTeamName().get().toUpperCase()));
+                        System.out.println(String.format("(%d) %s vs %s", index, entry.getValue().getHomeTeamName().toUpperCase(),
+                                entry.getValue().getAwayTeamName().toUpperCase()));
                         gameIds.put(index, entry.getKey());
                         index++;
                     }
@@ -122,7 +124,7 @@ public class Main {
                         validScoreInput = true;
                         game = scoreboard.get(gameIds.get(chosenGameOption));
                         System.out.println(String.format("Enter scores in the format: [%s's score]':[%s's score]",
-                                game.getHomeTeamName().get().toUpperCase(), game.getAwayTeamName().get().toUpperCase()));
+                                game.getHomeTeamName().toUpperCase(), game.getAwayTeamName().toUpperCase()));
                         option = scanner.nextLine();
                         if (!option.isEmpty() && option.matches("\\d+:\\d+")) {
                             enteredScores = option.split(":");
@@ -140,7 +142,7 @@ public class Main {
                                     System.out.println(" Invalid score entered.");
                                 }
                             }
-                        }else {
+                        } else {
                             validScoreInput = false;
                         }
                     } while (validScoreInput == false);
@@ -150,8 +152,8 @@ public class Main {
                             Integer.parseInt(enteredScores[0].trim()), Integer.parseInt(enteredScores[1].trim()), scoreboard);
 
                     System.out.println(String.format("Updated score for %s vs %s game is %d:%d",
-                            scoreboard.get(gameId).getHomeTeamName().get().toUpperCase(),scoreboard.get(gameId).getAwayTeamName().get().toUpperCase(),
-                            scoreboard.get(gameId).getHomeTeamScore(),scoreboard.get(gameId).getAwayTeamScore()));
+                            scoreboard.get(gameId).getHomeTeamName().toUpperCase(), scoreboard.get(gameId).getAwayTeamName().toUpperCase(),
+                            scoreboard.get(gameId).getHomeTeamScore(), scoreboard.get(gameId).getAwayTeamScore()));
                     break;
                 case "4": //TODO
                 default:

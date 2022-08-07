@@ -14,45 +14,45 @@ import java.util.*;
  */
 public final class FootballScoreboard implements Scoreboard {
     /**
-     * @param homeTeamName
-     * @param awayTeamName
-     * @param scoreboard   A map containing unique game Id and game information.
+     * @param game       Game to be started.
+     * @param scoreboard A map containing unique game Id and game information.
      * @return Updated scoreboard
      * @throws GameAlreadyStartedException
      * @throws GameSameTeamsException
      */
-    public Map<String, Game> startGame(final Optional<String> homeTeamName, final Optional<String> awayTeamName, final Map<String, Game> scoreboard) throws GameAlreadyStartedException, GameSameTeamsException, InvalidInputException {
-        validateInput(homeTeamName, awayTeamName, scoreboard);
-        String gameId1 = FootballGame.generateUniqueId(homeTeamName.get(), awayTeamName.get());
-        String gameId2 = FootballGame.generateUniqueId(awayTeamName.get(), homeTeamName.get());
+    public Map<String, Game> startGame(final Game game, final Map<String, Game> scoreboard) throws GameAlreadyStartedException, GameSameTeamsException, InvalidInputException {
+        validateInput(Optional.of(game.getHomeTeamName()), Optional.of(game.getAwayTeamName()), scoreboard);
+        String gameId1 = FootballGame.generateUniqueId(game.getHomeTeamName(), game.getAwayTeamName());
+        String gameId2 = FootballGame.generateUniqueId(game.getAwayTeamName(), game.getHomeTeamName());
         if (scoreboard.get(gameId1) != null || scoreboard.get(gameId2) != null) {
             throw new GameAlreadyStartedException();
         }
         Map<String, Game> copyOfScoreboard = new HashMap();
         copyOfScoreboard.putAll(scoreboard);
-        FootballGame footballGame = new FootballGame(homeTeamName, awayTeamName);
+        FootballGame footballGame = new FootballGame(game.getHomeTeamName(), game.getAwayTeamName());
         footballGame.setHomeTeamScore(0);
         footballGame.setAwayTeamScore(0);
-        String gameId = FootballGame.generateUniqueId(homeTeamName.get(), awayTeamName.get());
+        footballGame.setGameNumber(game.getGameNumber());
+        String gameId = FootballGame.generateUniqueId(game.getHomeTeamName(), game.getAwayTeamName());
         copyOfScoreboard.put(gameId, footballGame);
         return Collections.unmodifiableMap(copyOfScoreboard);
     }
 
     @Override
-    public Map<String, Game> finishGame(Optional<String> homeTeamName, Optional<String> awayTeamName, Map<String, Game> scoreboard)
+    public Map<String, Game> finishGame(final Game game, Map<String, Game> scoreboard)
             throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException {
-        validateInput(homeTeamName, awayTeamName, scoreboard);
+        validateInput(Optional.of(game.getHomeTeamName()), Optional.of(game.getAwayTeamName()), scoreboard);
         Map<String, Game> copyOfScoreboard = new HashMap();
         copyOfScoreboard.putAll(scoreboard);
-        String gameId1 = FootballGame.generateUniqueId(homeTeamName.get(), awayTeamName.get());
-        String gameId2 = FootballGame.generateUniqueId(awayTeamName.get(), homeTeamName.get());
-        if(copyOfScoreboard.containsKey(gameId1)){
+        String gameId1 = FootballGame.generateUniqueId(game.getHomeTeamName(), game.getAwayTeamName());
+        String gameId2 = FootballGame.generateUniqueId(game.getAwayTeamName(), game.getHomeTeamName());
+        if (copyOfScoreboard.containsKey(gameId1)) {
             copyOfScoreboard.remove(gameId1);
-        }else if (copyOfScoreboard.containsKey(gameId2)){
+        } else if (copyOfScoreboard.containsKey(gameId2)) {
             copyOfScoreboard.remove(gameId2);
-        }else {
+        } else {
             throw new FinishGameException(String.format("Game between %s and %s is not running so that it can be finished",
-                    homeTeamName.get(), awayTeamName.get()));
+                    game.getHomeTeamName(), game.getAwayTeamName()));
         }
         return Collections.unmodifiableMap(copyOfScoreboard);
     }
@@ -62,8 +62,8 @@ public final class FootballScoreboard implements Scoreboard {
         Map<String, Game> copyOfScoreboard = new HashMap();
         int existingGameScore = scoreboard.get(gameId).getHomeTeamScore() + scoreboard.get(gameId).getAwayTeamScore();
         int updatedGameScore = homeTeamScore + awayTeamScore;
-        if(existingGameScore > updatedGameScore){
-              throw new GameScoreException("Score cannot be updated. Updated game score less than the existing game score");
+        if (existingGameScore > updatedGameScore) {
+            throw new GameScoreException("Score cannot be updated. Updated game score less than the existing game score");
         }
         copyOfScoreboard.putAll(scoreboard);
         copyOfScoreboard.get(gameId).setHomeTeamScore(homeTeamScore);
@@ -71,7 +71,8 @@ public final class FootballScoreboard implements Scoreboard {
         return Collections.unmodifiableMap(copyOfScoreboard);
     }
 
-    private void validateInput(final Optional<String> homeTeamName, final Optional<String> awayTeamName, final Map<String, Game> scoreboard) throws GameSameTeamsException, GameAlreadyStartedException, InvalidInputException {
+    private void validateInput(final Optional<String> homeTeamName, final Optional<String> awayTeamName, final Map<String, Game> scoreboard)
+            throws GameSameTeamsException, InvalidInputException {
         String homeTeam = homeTeamName.orElseThrow(() -> new InvalidInputException("no value provided for home team name"));
         String awayTeam = awayTeamName.orElseThrow(() -> new InvalidInputException("no value provided for home team name"));
         Optional.of(scoreboard).orElseThrow(() -> new InvalidInputException("scoreboard in illegal state"));

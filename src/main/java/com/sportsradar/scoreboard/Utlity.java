@@ -8,19 +8,21 @@ import java.util.Map;
 
 public class Utlity {
 
-    static boolean isGameRunning(String homeTeamName, String awayTeamName, Map<String, Game> scoreboard){
-        if (scoreboard.containsKey(FootballGame.generateUniqueId(homeTeamName,awayTeamName)) ||
-                scoreboard.containsKey(FootballGame.generateUniqueId(awayTeamName,homeTeamName))){
+    static boolean isGameRunning(String homeTeamName, String awayTeamName, Map<String, Game> scoreboard) {
+        if (scoreboard.containsKey(FootballGame.generateUniqueId(homeTeamName, awayTeamName)) ||
+                scoreboard.containsKey(FootballGame.generateUniqueId(awayTeamName, homeTeamName))) {
             return true;
         }
         return false;
     }
+
     static String getRunningGameId(String homeTeamName, String awayTeamName, Map<String, Game> scoreboard) throws GameNotFoundException {
-        if (scoreboard.containsKey(FootballGame.generateUniqueId(homeTeamName,awayTeamName))) {
+        if (scoreboard.containsKey(FootballGame.generateUniqueId(homeTeamName, awayTeamName))) {
             return FootballGame.generateUniqueId(homeTeamName, awayTeamName);
-        }else if (scoreboard.containsKey(FootballGame.generateUniqueId(awayTeamName,homeTeamName))){
-            return FootballGame.generateUniqueId(awayTeamName,homeTeamName);
-        }else throw new GameNotFoundException(String.format("No game running between %s & %s", homeTeamName,awayTeamName));
+        } else if (scoreboard.containsKey(FootballGame.generateUniqueId(awayTeamName, homeTeamName))) {
+            return FootballGame.generateUniqueId(awayTeamName, homeTeamName);
+        } else
+            throw new GameNotFoundException(String.format("No game running between %s & %s", homeTeamName, awayTeamName));
     }
 
     static Game getRunningGame(String homeTeamName, String awayTeamName, Map<String, Game> scoreboard) throws Exception {
@@ -28,6 +30,7 @@ public class Utlity {
             return scoreboard.get(FootballGame.generateUniqueId(homeTeamName, awayTeamName));
         } else if (scoreboard.containsKey(FootballGame.generateUniqueId(awayTeamName, homeTeamName))) {
             return scoreboard.get(FootballGame.generateUniqueId(awayTeamName, homeTeamName));
-        } else throw new GameNotFoundException(String.format("No game running between %s & %s", homeTeamName,awayTeamName));
+        } else
+            throw new GameNotFoundException(String.format("No game running between %s & %s", homeTeamName, awayTeamName));
     }
 }

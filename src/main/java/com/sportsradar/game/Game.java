@@ -1,29 +1,48 @@
 package com.sportsradar.game;
 
-import java.util.Optional;
-
 /**
  * Define a game played between two teams.
  */
 public class Game {
-    private Optional<String> homeTeamName;
-    private Optional<String> awayTeamName;
+    private String homeTeamName;
+    private String awayTeamName;
     private int homeTeamScore;
     private int awayTeamScore;
 
-    public Optional<String> getHomeTeamName() {
+    private int gameNumber;
+
+    public Game(String homeTeamName, String awayTeamName) {
+        this.homeTeamName = homeTeamName;
+        this.awayTeamName = awayTeamName;
+        this.homeTeamScore = 0;
+        this.awayTeamScore = 0;
+    }
+
+    public static int getGameScore(Game game) {
+        return game.getHomeTeamScore() + game.getAwayTeamScore();
+    }
+
+    public int getGameNumber() {
+        return gameNumber;
+    }
+
+    public void setGameNumber(int gameNumber) {
+        this.gameNumber = gameNumber;
+    }
+
+    public String getHomeTeamName() {
         return homeTeamName;
     }
 
-    public void setHomeTeamName(Optional<String> homeTeamName) {
+    public void setHomeTeamName(String homeTeamName) {
         this.homeTeamName = homeTeamName;
     }
 
-    public Optional<String> getAwayTeamName() {
+    public String getAwayTeamName() {
         return awayTeamName;
     }
 
-    public void setAwayTeamName(Optional<String> awayTeamName) {
+    public void setAwayTeamName(String awayTeamName) {
         this.awayTeamName = awayTeamName;
     }
 
