@@ -14,13 +14,6 @@ import java.util.stream.Collectors;
  * If the game is already, starting again throws exception.
  */
 public final class FootballScoreboard implements Scoreboard {
-    /**
-     * @param game       Game to be started.
-     * @param scoreboard A map containing unique game Id and game information.
-     * @return Updated scoreboard
-     * @throws GameAlreadyStartedException
-     * @throws GameSameTeamsException
-     */
     public Map<String, Game> startGame(final Game game, final Map<String, Game> scoreboard) throws GameAlreadyStartedException, GameSameTeamsException, InvalidInputException {
         validateInput(Optional.of(game.getHomeTeamName()), Optional.of(game.getAwayTeamName()), scoreboard);
         String gameId1 = FootballGame.generateUniqueId(game.getHomeTeamName(), game.getAwayTeamName());
@@ -41,7 +34,7 @@ public final class FootballScoreboard implements Scoreboard {
 
     @Override
     public Map<String, Game> finishGame(final Game game, Map<String, Game> scoreboard)
-            throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException {
+            throws InvalidInputException, GameSameTeamsException, FinishGameException {
         validateInput(Optional.of(game.getHomeTeamName()), Optional.of(game.getAwayTeamName()), scoreboard);
         Map<String, Game> copyOfScoreboard = new HashMap();
         copyOfScoreboard.putAll(scoreboard);
@@ -59,16 +52,26 @@ public final class FootballScoreboard implements Scoreboard {
     }
 
     @Override
-    public Map<String, Game> updateGameScore(final String gameId, final int homeTeamScore, final int awayTeamScore, final Map<String, Game> scoreboard) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException, GameScoreException {
+    public Map<String, Game> updateGameScore(final Game game, final int homeTeamScore, final int awayTeamScore, final Map<String, Game> scoreboard) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException, GameScoreException {
         Map<String, Game> copyOfScoreboard = new HashMap();
-        int existingGameScore = scoreboard.get(gameId).getHomeTeamScore() + scoreboard.get(gameId).getAwayTeamScore();
-        int updatedGameScore = homeTeamScore + awayTeamScore;
+        String existingGameId = null;
+        String gameId1 = FootballGame.generateUniqueId(game.getHomeTeamName(), game.getAwayTeamName());
+        String gameId2 = FootballGame.generateUniqueId(game.getAwayTeamName(), game.getHomeTeamName());
+        int existingGameScore = -1;
+        if (scoreboard.get(gameId1) != null) {
+            existingGameId = gameId1;
+            existingGameScore = scoreboard.get(gameId1).getHomeTeamScore() + scoreboard.get(gameId1).getAwayTeamScore();
+        } else if (scoreboard.get(gameId2) != null) {
+            existingGameId = gameId2;
+            existingGameScore = scoreboard.get(gameId2).getHomeTeamScore() + scoreboard.get(gameId2).getAwayTeamScore();
+        }
+        int updatedGameScore = game.getHomeTeamScore() + game.getAwayTeamScore();
         if (existingGameScore > updatedGameScore) {
             throw new GameScoreException("Score cannot be updated. Updated game score less than the existing game score");
         }
         copyOfScoreboard.putAll(scoreboard);
-        copyOfScoreboard.get(gameId).setHomeTeamScore(homeTeamScore);
-        copyOfScoreboard.get(gameId).setAwayTeamScore(awayTeamScore);
+        copyOfScoreboard.get(existingGameId).setHomeTeamScore(homeTeamScore);
+        copyOfScoreboard.get(existingGameId).setAwayTeamScore(awayTeamScore);
         return Collections.unmodifiableMap(copyOfScoreboard);
     }
 

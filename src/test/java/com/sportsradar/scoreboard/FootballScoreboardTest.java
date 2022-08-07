@@ -113,9 +113,7 @@ public class FootballScoreboardTest {
         Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(GAMEAB, scoreboard);
         updatedScoreBoard = new FootballScoreboard().startGame(GAMECD, updatedScoreBoard);
 
-        String gameId = Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard);
-
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(gameId, 1, 5, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(new Game(TEAM_A, TEAM_B), 1, 5, updatedScoreBoard);
 
         assertEquals(Utlity.getRunningGame(TEAM_A, TEAM_B, updatedScoreBoard).getHomeTeamScore(), 1);
         assertEquals(Utlity.getRunningGame(TEAM_A, TEAM_B, updatedScoreBoard).getAwayTeamScore(), 5);
@@ -126,10 +124,9 @@ public class FootballScoreboardTest {
         Map<String, Game> scoreboard = new HashMap();
         Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(GAMEAB, scoreboard);
         updatedScoreBoard = new FootballScoreboard().startGame(GAMECD, updatedScoreBoard);
-        String gameId = Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(gameId, 1, 5, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEAB, 1, 5, updatedScoreBoard);
         Map<String, Game> immutableScoreboard = Collections.unmodifiableMap(updatedScoreBoard);
-        assertThrows(GameScoreException.class, () -> new FootballScoreboard().updateGameScore(gameId, 0, 4, immutableScoreboard));
+        assertThrows(GameScoreException.class, () -> new FootballScoreboard().updateGameScore(GAMEAB, 0, 4, immutableScoreboard));
     }
 
     @Test
@@ -143,11 +140,11 @@ public class FootballScoreboardTest {
         updatedScoreBoard = new FootballScoreboard().startGame(GAMEIJ, updatedScoreBoard);
 
 
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard), 0, 5, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_C, TEAM_D, updatedScoreBoard), 10, 2, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_E, TEAM_F, updatedScoreBoard), 2, 2, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_G, TEAM_H, updatedScoreBoard), 6, 6, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_I, TEAM_J, updatedScoreBoard), 3, 1, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEAB, 0, 5, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMECD, 10, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEEF, 2, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEGH, 6, 6, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEIJ, 3, 1, updatedScoreBoard);
 
 
         List<Game> games = new FootballScoreboard().getSummary(updatedScoreBoard);
@@ -169,10 +166,10 @@ public class FootballScoreboardTest {
         updatedScoreBoard = new FootballScoreboard().startGame(new Game(TEAM_A, TEAM_F), updatedScoreBoard);
 
 
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard), 1, 2, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_C, TEAM_D, updatedScoreBoard), 2, 3, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_E, TEAM_F, updatedScoreBoard), 3, 2, updatedScoreBoard);
-        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_F, updatedScoreBoard), 6, 4, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEAB, 1, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMECD, 2, 3, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(GAMEEF, 3, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(new Game(TEAM_A, TEAM_F), 6, 4, updatedScoreBoard);
 
 
         List<Game> games = new FootballScoreboard().getSummary(updatedScoreBoard);
