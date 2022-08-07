@@ -1,9 +1,6 @@
 package com.sportsradar.scoreboard;
 
-import com.sportsradar.exception.FinishGameException;
-import com.sportsradar.exception.GameAlreadyStartedException;
-import com.sportsradar.exception.GameSameTeamsException;
-import com.sportsradar.exception.InvalidInputException;
+import com.sportsradar.exception.*;
 import com.sportsradar.game.FootballGame;
 import com.sportsradar.game.Game;
 
@@ -57,6 +54,20 @@ public final class FootballScoreboard implements Scoreboard {
             throw new FinishGameException(String.format("Game between %s and %s is not running so that it can be finished",
                     homeTeamName.get(), awayTeamName.get()));
         }
+        return Collections.unmodifiableMap(copyOfScoreboard);
+    }
+
+    @Override
+    public Map<String, Game> updateGameScore(final String gameId, final int homeTeamScore, final int awayTeamScore, final Map<String, Game> scoreboard) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException, GameScoreException {
+        Map<String, Game> copyOfScoreboard = new HashMap();
+        int existingGameScore = scoreboard.get(gameId).getHomeTeamScore() + scoreboard.get(gameId).getAwayTeamScore();
+        int updatedGameScore = homeTeamScore + awayTeamScore;
+        if(existingGameScore > updatedGameScore){
+              throw new GameScoreException("Score cannot be updated. Updated game score less than the existing game score");
+        }
+        copyOfScoreboard.putAll(scoreboard);
+        copyOfScoreboard.get(gameId).setHomeTeamScore(homeTeamScore);
+        copyOfScoreboard.get(gameId).setAwayTeamScore(awayTeamScore);
         return Collections.unmodifiableMap(copyOfScoreboard);
     }
 
