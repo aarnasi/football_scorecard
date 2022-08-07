@@ -17,7 +17,11 @@ The application is expected to support four operations to manage a scoreboard.
 3. Update score of a game.
 4. Display summary of the running games.
 
-Instruction:
+Implementation resides at:
+
+https://github.com/aarnasi/football_scorecard/blob/master/src/main/java/com/sportsradar/scoreboard/FootballScoreboard.java
+
+Instructions:
 
 1. Running tests: gradlew test
 2. Buidling the application: gradlew build
