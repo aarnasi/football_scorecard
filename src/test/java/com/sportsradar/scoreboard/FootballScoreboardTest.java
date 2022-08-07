@@ -8,13 +8,9 @@ import com.sportsradar.game.FootballGame;
 import com.sportsradar.game.Game;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UnknownFormatConversionException;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FootballScoreboardTest {
 
@@ -134,5 +130,56 @@ public class FootballScoreboardTest {
         updatedScoreBoard = new FootballScoreboard().updateGameScore(gameId, 1, 5, updatedScoreBoard);
         Map<String, Game> immutableScoreboard = Collections.unmodifiableMap(updatedScoreBoard);
         assertThrows(GameScoreException.class, () -> new FootballScoreboard().updateGameScore(gameId, 0, 4, immutableScoreboard));
+    }
+
+    @Test
+    void shouldSortGames_withLatestGameAddedGameFirst_success() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(GAMEAB, scoreboard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMECD, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMEEF, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMEGH, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMEIJ, updatedScoreBoard);
+
+
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard), 0, 5, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_C, TEAM_D, updatedScoreBoard), 10, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_E, TEAM_F, updatedScoreBoard), 2, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_G, TEAM_H, updatedScoreBoard), 6, 6, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_I, TEAM_J, updatedScoreBoard), 3, 1, updatedScoreBoard);
+
+
+        List<Game> games = new FootballScoreboard().getSummary(updatedScoreBoard);
+
+        assertArrayEquals(new String[]{TEAM_G, TEAM_H}, new String[]{games.get(0).getHomeTeamName(), games.get(0).getAwayTeamName()});
+        assertArrayEquals(new String[]{TEAM_C, TEAM_D}, new String[]{games.get(1).getHomeTeamName(), games.get(1).getAwayTeamName()});
+        assertArrayEquals(new String[]{TEAM_A, TEAM_B}, new String[]{games.get(2).getHomeTeamName(), games.get(2).getAwayTeamName()});
+        assertArrayEquals(new String[]{TEAM_I, TEAM_J}, new String[]{games.get(3).getHomeTeamName(), games.get(3).getAwayTeamName()});
+        assertArrayEquals(new String[]{TEAM_E, TEAM_F}, new String[]{games.get(4).getHomeTeamName(), games.get(4).getAwayTeamName()});
+    }
+
+    @Test
+    void shouldGetGameSummary_success() throws Exception {
+        Map<String, Game> scoreboard = new HashMap();
+
+        Map<String, Game> updatedScoreBoard = new FootballScoreboard().startGame(GAMEAB, scoreboard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMECD, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().startGame(GAMEEF, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().startGame(new Game(TEAM_A, TEAM_F), updatedScoreBoard);
+
+
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_B, updatedScoreBoard), 1, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_C, TEAM_D, updatedScoreBoard), 2, 3, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_E, TEAM_F, updatedScoreBoard), 3, 2, updatedScoreBoard);
+        updatedScoreBoard = new FootballScoreboard().updateGameScore(Utlity.getRunningGameId(TEAM_A, TEAM_F, updatedScoreBoard), 6, 4, updatedScoreBoard);
+
+
+        List<Game> games = new FootballScoreboard().getSummary(updatedScoreBoard);
+
+        assertArrayEquals(new String[]{games.get(0).getHomeTeamName(), games.get(0).getAwayTeamName()}, new String[]{TEAM_A, TEAM_F});
+        assertArrayEquals(new String[]{games.get(1).getHomeTeamName(), games.get(1).getAwayTeamName()}, new String[]{TEAM_C, TEAM_D});
+        assertArrayEquals(new String[]{games.get(2).getHomeTeamName(), games.get(2).getAwayTeamName()}, new String[]{TEAM_E, TEAM_F});
+        assertArrayEquals(new String[]{games.get(3).getHomeTeamName(), games.get(3).getAwayTeamName()}, new String[]{TEAM_A, TEAM_B});
     }
 }

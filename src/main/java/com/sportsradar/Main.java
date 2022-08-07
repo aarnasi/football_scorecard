@@ -4,10 +4,7 @@ import com.sportsradar.exception.*;
 import com.sportsradar.game.Game;
 import com.sportsradar.scoreboard.FootballScoreboard;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws FinishGameException, InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, GameScoreException {
@@ -155,7 +152,12 @@ public class Main {
                             scoreboard.get(gameId).getHomeTeamName().toUpperCase(), scoreboard.get(gameId).getAwayTeamName().toUpperCase(),
                             scoreboard.get(gameId).getHomeTeamScore(), scoreboard.get(gameId).getAwayTeamScore()));
                     break;
-                case "4": //TODO
+                case "4":
+                    System.out.println("Displaying summary");
+                    List<Game> orderedGames = new FootballScoreboard().getSummary(scoreboard);
+                    orderedGames.forEach((footballGame -> System.out.println(String.format("%s %d - %s %d", footballGame.getHomeTeamName()
+                            , footballGame.getHomeTeamScore(), footballGame.getAwayTeamName(), footballGame.getAwayTeamScore()))));
+                    break;
                 default:
                     option = "5";
             }

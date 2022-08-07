@@ -5,6 +5,7 @@ import com.sportsradar.game.FootballGame;
 import com.sportsradar.game.Game;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /***
  * Enables scoreboard management for a football world cup game.
@@ -69,6 +70,13 @@ public final class FootballScoreboard implements Scoreboard {
         copyOfScoreboard.get(gameId).setHomeTeamScore(homeTeamScore);
         copyOfScoreboard.get(gameId).setAwayTeamScore(awayTeamScore);
         return Collections.unmodifiableMap(copyOfScoreboard);
+    }
+
+    @Override
+    public List<Game> getSummary(Map<String, Game> scoreboard) {
+        Comparator<Game> compareByGameScore = Comparator.comparing(Game::getGameScore, Collections.reverseOrder());
+        Comparator<Game> compareByGameNumber = Comparator.comparing(Game::getGameNumber, Collections.reverseOrder());
+        return scoreboard.values().stream().sorted(compareByGameScore.thenComparing(compareByGameNumber)).collect(Collectors.toList());
     }
 
     private void validateInput(final Optional<String> homeTeamName, final Optional<String> awayTeamName, final Map<String, Game> scoreboard)

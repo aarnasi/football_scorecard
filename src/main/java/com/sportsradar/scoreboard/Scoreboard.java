@@ -3,6 +3,7 @@ package com.sportsradar.scoreboard;
 import com.sportsradar.exception.*;
 import com.sportsradar.game.Game;
 
+import java.util.List;
 import java.util.Map;
 
 public interface Scoreboard {
@@ -12,4 +13,6 @@ public interface Scoreboard {
     Map<String, Game> finishGame(Game game, Map<String, Game> games) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException;
 
     Map<String, Game> updateGameScore(String gameId, int homeTeamScore, int awayTeamScore, Map<String, Game> games) throws InvalidInputException, GameAlreadyStartedException, GameSameTeamsException, FinishGameException, GameScoreException;
+
+    List<Game> getSummary(Map<String, Game> scoreboard);
 }
