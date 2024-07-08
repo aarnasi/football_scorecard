@@ -17,17 +17,20 @@ Football Scoreboard Manager assumptions :
 3. Update score of a football game.
 4. Display summary of the running football games.
 
+
 ### Local development instructions:
 
-Run tests:
-   ```shell
-    gradlew test
-   ```
-Build application
+Building the application
 ```shell
-gradlew build
+./gradlew build
 ```
-Run application in console
+Running application in console
 ```shell
-java  com.sportsradar.Main
+java -jar build/libs/football_scorecard-*-SNAPSHOT.jar
 ```
+
+#### Running Unit tests
+```shell
+./gradlew test
+```
+
