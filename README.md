@@ -1,24 +1,33 @@
-The application is intended to manage a World cup football Scoreboard.
+# Football Scorecard Manager
 
-The application assumes the below for a game to be managed via the scoreboard application:
-1. Game is played between two teams only.
-2. Only a single game could be in running state between two teams.
-3. Scoreboard displays running that are in progress.
-4. Each teams score will be always be greater than zero.
+## Overview
+Football Scorecard Manager is a console based application and manages World cup football scoreboard.
+
+Football Scoreboard Manager assumptions :
+1. Football can be played only beteen two teams.
+2. Only a single football game could be in running state between two teams.
+3. Each team's score will be always be greater than zero.
+4. A football game is identified to be unique by the pair team names associated with a game.
 5  Updated score of a running game will always be greater than or equal to existing score.
 
-Other:
-1. Game is identified to be unique by the pair team names associated with a game.
+### Supported operations:
 
-The application is expected to support four operations to manage a scoreboard.
+1. Start a football game.
+2. Finish a football game.
+3. Update score of a football game.
+4. Display summary of the running football games.
 
-1. Start a game.
-2. Finish a game.
-3. Update score of a game.
-4. Display summary of the running games.
+### Local development instructions:
 
-Instructions:
-
-1. Running tests: gradlew test
-2. Buidling the application: gradlew build
-3. Running application in console: Running src/main/java/com/sportsradar/Main.java using any JAVA IDE. 
+Run tests:
+   ```shell
+    gradlew test
+   ```
+Build application
+```shell
+gradlew build
+```
+Run application in console
+```shell
+java  com.sportsradar.Main
+```
